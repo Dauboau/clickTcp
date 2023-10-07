@@ -1,0 +1,23 @@
+<MainWindow>:
+    player_button: player_button
+    player_label: player_label
+
+    PlayerButton:
+        id: player_button 
+        size_hint: 1, 1
+        background_color: 0, 1, 0, 0 # O botão cobre a tela toda e é transparente
+        on_press: 
+            root.on_click()
+
+    PlayerLabel:
+        id: player_label
+        background_color: 0, 0, 1, 1
+
+        canvas:
+
+            Color:
+                rgba: self.background_color
+
+            Rectangle:
+                size: self.width, self.height
+                pos: self.pos
