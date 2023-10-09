@@ -1,0 +1,19 @@
+
+#: import start_window main.StartWindow
+#: import main_window main.MainWindow
+
+#: include start_window.kv
+#: include main_window.kv
+
+<Manager>:
+    id: screen_manager
+
+    startwindow: StartWindow
+    mainwindow: MainWindow
+
+    StartWindow:
+        id: StartWindow
+        name: "StartWindow"
+    MainWindow:
+        id: MainWindow
+        name: "MainWindow"
