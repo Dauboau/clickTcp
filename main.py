@@ -1,3 +1,4 @@
+import threading
 from kivy.app import App
 from kivy.uix.floatlayout import FloatLayout
 from kivy.lang import Builder
@@ -6,10 +7,12 @@ from kivy.uix.label import Label
 from kivy.properties import ObjectProperty
 from kivy.properties import NumericProperty
 import random
+from threading import Thread, main_thread
+from kivy.clock import Clock
+
+from multiplayer import ClientSocket
 
 Builder.load_file("main_window.kv")
-
-opponent_clicks  = 0
 
 class PlayerLabel(Label):
     height_hint = NumericProperty(0.5)
@@ -35,13 +38,27 @@ class MainWindow(FloatLayout):
         player_label = ObjectProperty(None)
         self.player_label.set_pos(self.x, self.y)
 
+        self.sockClient = ClientSocket() # port can be an argument
+        Thread(target=self.enemy_data).start()
+
     def on_click(self):
-        global opponent_clicks
+
         self.player_button.num_clicks += 1
-        opponent_clicks += random.randint(-1, 3)#apagar
-        self.player_label.height_hint += (self.player_button.num_clicks - opponent_clicks)*0.05
+
+        self.player_label.height_hint += 1 * 0.1
         self.player_label.size_hint = (1, self.player_label.height_hint)
+
         #verificar se o jogo acabou
+
+    def enemy_data(self):
+        while True:
+          
+            p2_data = int(self.sockClient.get_data())
+            
+            self.player_label.height_hint -= p2_data * 0.1
+            self.player_label.size_hint = (1, self.player_label.height_hint)
+                
+            #print(p2_data)
 
 class MyApp(App):
     def build(self):
