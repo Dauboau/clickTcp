@@ -1,4 +1,6 @@
 import threading
+from time import sleep
+import time
 from kivy.uix.popup import Popup 
 from kivy.app import App
 from kivy.uix.floatlayout import FloatLayout
@@ -15,7 +17,7 @@ from threading import Thread, main_thread
 from kivy.clock import Clock
 from kivy.config import Config
 
-from multiplayer import ClientSocket
+from multiplayer import ClientSocket, HostSocket
 
 #Config.set('graphics', 'fullscreen', 1)
 
@@ -58,69 +60,174 @@ class StartWindow(Screen):
         def confirma(obj):
 
             try:
+                global port
                 port = int(portInput.text)
             except:
-                self.alert('Digite o valor de uma porta! Dica: 54545')
+                Alert('Digite o valor de uma porta! Dica: 54545')
                 return
 
-            print(portInput.text)
-
             if(port>0 and port<65535):
-                self.manager.current = 'MainWindow'
+                global role
+                role = "host"
                 popup.dismiss()
+                self.manager.current = 'MainWindow'
 
             else:
-                self.alert('O valor da porta deve ser entre 0 e 65535!')
+                Alert('O valor da porta deve ser entre 0 e 65535!')
   
         closeButton.bind(on_press = confirma)
 
 
     def client(self):
-        print("client")
+        #print("client")
 
-    def alert(self,text_alert):
+        layout = GridLayout(cols = 1, padding = 10) 
+  
+        portInput = TextInput(hint_text='código',input_filter = 'int',multiline=False,halign = 'center',font_size=80,background_color=(0,0,0,0))
+        closeButton = Button(text = "Confirmar")
+  
+        layout.add_widget(portInput) 
+        layout.add_widget(closeButton)        
+  
+        popup = Popup(title ='Digite o código do Host!', content = layout,size_hint=(None, None), size=(800, 400))
 
+        popup.open()
+
+        def confirma(obj):
+
+            try:
+                global port
+                port = int(portInput.text)
+            except:
+                Alert('Por favor, digite o código do Host!')
+                return
+
+            if(port>0 and port<65535):
+                global role
+                role = "client"
+                popup.dismiss()
+                self.manager.current = 'MainWindow'
+
+            else:
+                Alert('O valor do código deve ser entre 0 e 65535!')
+  
+        closeButton.bind(on_press = confirma)
+    
+class Alert:
+
+    def __init__(self, text_alert,dismissable=True, **kwargs):
         layoutAlert = GridLayout(cols = 1, padding = 10) 
         closeAlertButton = Button(text = "Ok")
         layoutAlert.add_widget(closeAlertButton) 
 
-        alert = Popup(title = text_alert,content=layoutAlert,size_hint=(None, None), size=(800, 250))
-        alert.open()
+        self.alert = Popup(title = text_alert,content=layoutAlert,auto_dismiss=dismissable,size_hint=(None, None), size=(800, 250))
+        self.alert.open()
 
-        closeAlertButton.bind(on_press = alert.dismiss)
-    
+        if(dismissable):
+            closeAlertButton.bind(on_press = self.alert.dismiss)
+
+        super(Alert, self).__init__(**kwargs)
 
 class MainWindow(Screen):
     def __init__(self, **kwargs):
         super(MainWindow, self).__init__(**kwargs)
 
-        return 
-    
+    def on_enter(self):
+        """Função executada no momento que a tela é exibida!"""
+
+        print("MainWindow está na tela!")
+
         player_button = ObjectProperty(None)
         player_label = ObjectProperty(None)
         self.player_label.set_pos(self.x, self.y)
 
-        self.sockClient = ClientSocket() # port can be an argument
-        Thread(target=self.enemy_data).start()
+        global last_p2_score
+        last_p2_score=0
+
+        self.waitingAlert = Alert("Aguardando inimigo. Prepare-se!",dismissable=False)
+
+        if(role=="client"):
+
+            portClient = port
+            portHost = port+1
+
+            self.sockClient = ClientSocket(port=portClient)
+            self.sockHost = HostSocket(port=portHost)
+            Thread(target=self.enemy_data).start()
+
+        elif(role=="host"):
+
+            portHost = port
+            portClient = port+1
+
+            self.sockClient = ClientSocket(port=portClient)
+            self.sockHost = HostSocket(port=portHost)
+            Thread(target=self.user_data).start()
 
     def on_click(self):
 
         self.player_button.num_clicks += 1
 
-        self.player_label.height_hint += 1 * 0.1
+        self.player_label.height_hint += 1 * 0.08
         self.player_label.size_hint = (1, self.player_label.height_hint)
 
         #verificar se o jogo acabou
 
+    def errorCritical(self,data):
+        Alert("Verifique o código e tente novamente!")
+        self.manager.current = 'StartWindow'
+
+    def enemyFound(self,data):
+        self.waitingAlert.alert.dismiss()
+
     def enemy_data(self):
+
+        try:
+            self.sockClient.connect()
+        except:
+            print("Impossível se conectar!")
+            Clock.schedule_once(self.errorCritical)
+            return
+
+        if(role=="client"):
+            try:
+                Thread(target=self.user_data).start()
+                Clock.schedule_once(self.enemyFound)
+            except:
+                print("Impossível se conectar!")
+                Clock.schedule_once(self.errorCritical)
+                return
+
         while True:
           
-            p2_data = int(self.sockClient.get_data())
+            global last_p2_score
+            actual_p2_score = int(self.sockClient.get_data())
             
-            self.player_label.height_hint -= p2_data * 0.1
-            self.player_label.size_hint = (1, self.player_label.height_hint)
+            if(actual_p2_score > last_p2_score):
+                self.player_label.height_hint -= (actual_p2_score-last_p2_score) * 0.08
+                self.player_label.size_hint = (1, self.player_label.height_hint)
+                last_p2_score = actual_p2_score
                 
-            #print(p2_data)
+            #print(actual_p2_sxcore)
+
+    def user_data(self):
+
+        self.sockHost.connect()
+
+        if(role=="host"):
+            try:
+                Thread(target=self.enemy_data).start()
+                Clock.schedule_once(self.enemyFound)
+            except:
+                #print("Impossível se conectar!")
+                Clock.schedule_once(self.errorCritical)
+                return
+
+        while True:
+            time.sleep(0.1)
+            self.sockHost.send_data(self.player_button.num_clicks)
+            #print(self.player_button.num_clicks)
+
 
 class Manager(ScreenManager):
     screen_one = ObjectProperty(None)
@@ -128,7 +235,7 @@ class Manager(ScreenManager):
 
 class MyApp(App):
     def build(self):
-        #self.title = 'ClickTCP'
+        self.title = 'ClickTCP'
         Builder.load_file("screen.kv")
         return Manager(transition=NoTransition())
 

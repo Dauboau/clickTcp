@@ -7,29 +7,32 @@ class ClientSocket:
     def __init__(self,host="localhost",port=54545):
 
         self.sock = socket.socket()
-        self.sock.connect((host, port))
+        self.port = port
+        self.host = host
 
-        print("Conectado ao inimigo como client!")
+    def connect(self):
+        self.sock.connect((self.host, self.port))
+        print("Conectado ao inimigo como client pela porta:",self.port)
 
     def get_data(self):
         return self.sock.recv(1024)
     
-class ServerSocket:
+class HostSocket:
 
-    def __init__(self,host="localhost",port=54546):
+    def __init__(self,port=54546):
 
-        self.serversocket = socket.socket()
-        self.serversocket.bind(('', port))
+        self.sock = socket.socket()
+        self.port=port
 
-        self.serversocket.listen(1)
-
-        self.clientsocket,addr = self.serversocket.accept()
-
-        print("Conectado ao inimigo como servidor!")
+    def connect(self):
+        self.sock.bind(('', self.port))
+        self.sock.listen(1)
+        self.sock,addr = self.sock.accept()
+        print("Conectado ao inimigo como servidor pela porta:",self.port)
 
     def send_data(self,clicks):
 
         msg = str(clicks)
-        self.clientsocket.send(msg.encode('ascii'))
+        self.sock.send(msg.encode('ascii'))
 
         return
