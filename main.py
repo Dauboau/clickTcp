@@ -1,6 +1,7 @@
 import threading
 from kivy.app import App
 from kivy.uix.floatlayout import FloatLayout
+from kivy.uix.gridlayout import GridLayout
 from kivy.lang import Builder
 from kivy.uix.button import Button
 from kivy.uix.label import Label
@@ -9,10 +10,11 @@ from kivy.properties import NumericProperty
 import random
 from threading import Thread, main_thread
 from kivy.clock import Clock
+from kivy.config import Config
 
 from multiplayer import ClientSocket
 
-Builder.load_file("main_window.kv")
+#Config.set('graphics', 'fullscreen', 1)
 
 class PlayerLabel(Label):
     height_hint = NumericProperty(0.5)
@@ -30,6 +32,11 @@ class PlayerLabel(Label):
 class PlayerButton(Button):
     
     num_clicks = NumericProperty(0)
+
+class StartWindow(GridLayout):
+    def __init__(self, **kwargs):
+        Builder.load_file("start.kv")
+        super(StartWindow, self).__init__(**kwargs)
 
 class MainWindow(FloatLayout):
     def __init__(self, **kwargs):
@@ -62,7 +69,8 @@ class MainWindow(FloatLayout):
 
 class MyApp(App):
     def build(self):
-        return MainWindow()
+        self.title = 'ClickTCP'
+        return StartWindow()
 
 if __name__ == '__main__':
     MyApp().run()

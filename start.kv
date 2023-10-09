@@ -1,1 +1,16 @@
-<StartWindow>:
+
+#:import utils kivy.utils
+
+<StartWindow>: 
+      
+    cols: 1
+    rows: 2
+     
+    Button:        
+        text: 'Host'
+        background_color: utils.get_color_from_hex('#3585DA')
+        font_size: 100
+    Button:
+        text: 'Connect'
+        background_color: utils.get_color_from_hex('#59C1E8')
+        font_size: 100
