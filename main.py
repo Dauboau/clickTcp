@@ -216,6 +216,7 @@ class MainWindow(Screen):
 
         if(role=="host"):
             try:
+                time.sleep(0.1)
                 Thread(target=self.enemy_data).start()
                 Clock.schedule_once(self.enemyFound)
             except:
