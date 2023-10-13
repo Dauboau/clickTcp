@@ -186,11 +186,11 @@ class MainWindow(Screen):
         while not self.game_is_over:
             with self.mutex:
                 if self.player_label.height_hint <= 0:
-                    print("Vc perdeu otário!")
+                    self.manager.current = 'EndLoseWindow'
                     self.game_is_over = True
 
                 elif self.player_label.height_hint >= 1:
-                    print("Cê é o bixão memo hein doido")
+                    self.manager.current = 'EndWinWindow'
                     self.game_is_over = True
                 time.sleep(0.1)
 #########################################################################
@@ -251,7 +251,14 @@ class MainWindow(Screen):
             self.sockHost.send_data(self.player_button.num_clicks)
             #print(self.player_button.num_clicks)
 
+class EndWinWindow(Screen):
+    def __init__(self, **kwargs):
+        super(EndWinWindow, self).__init__(**kwargs)
 
+class EndLoseWindow(Screen):
+    def __init__(self, **kwargs):
+        super(EndLoseWindow, self).__init__(**kwargs)
+        
 class Manager(ScreenManager):
     screen_one = ObjectProperty(None)
     screen_two = ObjectProperty(None)
