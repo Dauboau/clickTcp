@@ -203,16 +203,6 @@ class MainWindow(Screen):
 
             with self.mutex:
                 if self.player_label.height_hint <= 0:
-<<<<<<< HEAD
-                    Clock.schedule_once(self.change_screen, 0)
-                    self.game_is_over = True
-                    self.finish_connection = True
-
-                elif self.player_label.height_hint >= 1:
-                    Clock.schedule_once(self.change_screen, 0)
-                    self.game_is_over = True
-                    self.finish_connection = True
-=======
                     Clock.schedule_once(self.endLose)
                     self.game_is_over = True
                     stop_threads = True
@@ -220,8 +210,6 @@ class MainWindow(Screen):
                     Clock.schedule_once(self.endWin)
                     self.game_is_over = True
                     stop_threads = True
-
->>>>>>> 3bd70b08855ac68c8b57d4427279ba08e63e139e
                 time.sleep(0.1)
 #########################################################################
 
@@ -283,16 +271,11 @@ class MainWindow(Screen):
                 print("Impossível se conectar!")
                 Clock.schedule_once(self.errorCritical)
                 return
-
-<<<<<<< HEAD
-        while not self.finish_connection:
-=======
         while True:
 
             global stop_threads
             if stop_threads:
                 break
->>>>>>> 3bd70b08855ac68c8b57d4427279ba08e63e139e
           
             global last_p2_score
             actual_p2_score = int(self.sockClient.get_data())
@@ -320,16 +303,12 @@ class MainWindow(Screen):
                 Clock.schedule_once(self.errorCritical)
                 return
 
-<<<<<<< HEAD
-        while not self.finish_connection:
-=======
         while True:
 
             global stop_threads
             if stop_threads:
                 break
 
->>>>>>> 3bd70b08855ac68c8b57d4427279ba08e63e139e
             time.sleep(0.1)
             self.sockHost.send_data(self.player_button.num_clicks)
             #print(self.player_button.num_clicks)
