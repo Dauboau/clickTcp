@@ -8,7 +8,7 @@ run:
 	$(PYTHON) $(SRC_DIR)/$(MAIN_SCRIPT)
 
 install-dependencies:
-	$(PYTHON) -m pip install -r requirements.txt
+	$(PYTHON) -m pip install kivy
 
 clean:
 	rm -rf __pycache__
