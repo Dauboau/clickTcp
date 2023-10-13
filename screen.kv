@@ -1,15 +1,21 @@
 
 #: import start_window main.StartWindow
 #: import main_window main.MainWindow
+#: import endwin_window main.EndWinWindow
+#: import endlose_window main.EndLoseWindow
 
 #: include start_window.kv
 #: include main_window.kv
+#: include endwin_window.kv
+#: include endlose_window.kv
 
 <Manager>:
     id: screen_manager
 
     startwindow: StartWindow
     mainwindow: MainWindow
+    endwinwindow: EndWinWindow
+    endlosewindow: EndLoseWindow
 
     StartWindow:
         id: StartWindow
@@ -17,3 +23,9 @@
     MainWindow:
         id: MainWindow
         name: "MainWindow"
+    EndWinWindow:
+        id: EndWinWindow
+        name: "EndWinWindow"
+    EndLoseWindow:
+        id: EndLoseWindow
+        name: "EndLoseWindow"        
