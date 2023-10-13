@@ -129,8 +129,14 @@ class Alert:
         super(Alert, self).__init__(**kwargs)
 
 class MainWindow(Screen):
+
+    game_is_over = False######################
+    mutex = threading.Lock() ###########################
+
     def __init__(self, **kwargs):
         super(MainWindow, self).__init__(**kwargs)
+        self.check_for_game_over = threading.Thread(target=self.check_game_over) ###########################
+        
 
     def on_enter(self):
         """Função executada no momento que a tela é exibida!"""
@@ -145,6 +151,8 @@ class MainWindow(Screen):
         last_p2_score=0
 
         self.waitingAlert = Alert("Aguardando inimigo. Prepare-se!",dismissable=False)
+
+        self.check_for_game_over.start()#####################
 
         if(role=="client"):
 
@@ -172,6 +180,20 @@ class MainWindow(Screen):
         self.player_label.size_hint = (1, self.player_label.height_hint)
 
         #verificar se o jogo acabou
+#########################################################################
+    def check_game_over(self):
+
+        while not self.game_is_over:
+            with self.mutex:
+                if self.player_label.height_hint <= 0:
+                    print("Vc perdeu otário!")
+                    self.game_is_over = True
+
+                elif self.player_label.height_hint >= 1:
+                    print("Cê é o bixão memo hein doido")
+                    self.game_is_over = True
+                time.sleep(0.1)
+#########################################################################
 
     def errorCritical(self,data):
         Alert("Verifique o código e tente novamente!")
