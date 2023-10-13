@@ -43,40 +43,43 @@ class StartWindow(Screen):
         super(StartWindow, self).__init__(**kwargs)
 
     def on_enter(self):
-        print("StartWindow está na tela!")
+        print("StartWindow está na tela!") # Imprime uma mensagem ao entrar na tela de início
 
     def host(self):
         #print("host")
-
+        # Função para lidar com a ação do botão "Host"
         layout = GridLayout(cols = 1, padding = 10) 
   
         portInput = TextInput(hint_text='port',input_filter = 'int',multiline=False,halign = 'center',font_size=80,background_color=(0,0,0,0))
-        closeButton = Button(text = "Confirmar")
+        # Cria um campo de entrada de texto com uma dica, filtro de entrada de inteiros e outras configurações
+
+        closeButton = Button(text = "Confirmar") # Cria um botão com o texto "Confirmar"
   
-        layout.add_widget(portInput) 
-        layout.add_widget(closeButton)        
+        layout.add_widget(portInput) # Adiciona o campo de entrada ao layout  
+        layout.add_widget(closeButton) # Adiciona o botão ao layout        
   
         popup = Popup(title ='Host - Defina uma porta!', content = layout,size_hint=(None, None), size=(800, 400))
+        # Cria uma janela pop-up com um título e o layout
 
-        popup.open()
+        popup.open() # Abre a janela pop-up
 
         def confirma(obj):
 
             try:
-                global port
-                port = int(portInput.text)
+                global port # Variável global para armazenar a porta
+                port = int(portInput.text) # Converte o valor do campo de entrada em um inteiro
             except:
-                Alert('Digite o valor de uma porta! Dica: 54545')
+                Alert('Digite o valor de uma porta! Dica: 54545') # Mostra uma mensagem de alerta em caso de erro
                 return
 
-            if(port>0 and port<65535):
-                global role
-                role = "host"
-                popup.dismiss()
-                self.manager.current = 'MainWindow'
+            if(port>0 and port<65535): # Verifica se a porta está no intervalo válido
+                global role # Variável global para definir a função (host ou cliente)
+                role = "host" # Define a função como "host"
+                popup.dismiss() # Fecha a janela pop-up
+                self.manager.current = 'MainWindow' # Muda para a tela principal
 
             else:
-                Alert('O valor da porta deve ser entre 0 e 65535!')
+                Alert('O valor da porta deve ser entre 0 e 65535!') # Mostra uma mensagem de alerta em caso de porta inválida
   
         closeButton.bind(on_press = confirma)
 
