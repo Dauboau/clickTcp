@@ -42,6 +42,9 @@ class StartWindow(Screen):
     def __init__(self, **kwargs):
         super(StartWindow, self).__init__(**kwargs)
 
+    def on_enter(self):
+        print("StartWindow está na tela!")
+
     def host(self):
         #print("host")
 
@@ -186,11 +189,11 @@ class MainWindow(Screen):
         while not self.game_is_over:
             with self.mutex:
                 if self.player_label.height_hint <= 0:
-                    self.manager.current = 'EndLoseWindow'
+                    Clock.schedule_once(self.endLose)
                     self.game_is_over = True
 
                 elif self.player_label.height_hint >= 1:
-                    self.manager.current = 'EndWinWindow'
+                    Clock.schedule_once(self.endWin)
                     self.game_is_over = True
                 time.sleep(0.1)
 #########################################################################
@@ -198,6 +201,14 @@ class MainWindow(Screen):
     def errorCritical(self,data):
         Alert("Verifique o código e tente novamente!")
         self.manager.current = 'StartWindow'
+
+    def endWin(self,data):
+        self.manager.current = 'EndLoseWindow'
+        print("EndLoseWindow está na tela!")
+
+    def endLose(self,data):
+        self.manager.current = 'EndWinWindow'
+        print("EndWinWindow está na tela!")
 
     def enemyFound(self,data):
         self.waitingAlert.alert.dismiss()
