@@ -1,0 +1,29 @@
+
+#:import utils kivy.utils
+
+<EndLoseWindow>: 
+      
+    GridLayout:
+        cols: 1
+
+        Label:        
+            text: 'Derrota'
+            font_size: 100
+
+        GridLayout:
+            cols: 2
+
+            Button:
+                text: 'Início'
+                background_color: utils.get_color_from_hex('#0000FF')
+                font_size: 100
+
+                on_press: 
+                    app.root.current = 'StartWindow'
+            Button:
+                text: 'Sair'
+                background_color: utils.get_color_from_hex('FF0000')
+                font_size: 100
+
+                on_press: 
+                    app.stop()     
