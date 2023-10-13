@@ -42,6 +42,9 @@ class StartWindow(Screen):
     def __init__(self, **kwargs):
         super(StartWindow, self).__init__(**kwargs)
 
+    def on_enter(self):
+        print("StartWindow está na tela!")
+
     def host(self):
         #print("host")
 
@@ -136,8 +139,7 @@ class MainWindow(Screen):
 
     def __init__(self, **kwargs):
         super(MainWindow, self).__init__(**kwargs)
-        self.check_for_game_over = threading.Thread(target=self.check_game_over) ###########################
-        
+        #self.gameOverThread = threading.Thread(target=self.check_game_over) ###########################
 
     def on_enter(self):
         """Função executada no momento que a tela é exibida!"""
@@ -150,10 +152,18 @@ class MainWindow(Screen):
 
         global last_p2_score
         last_p2_score=0
+        self.player_button.num_clicks=0
+        self.player_label.height_hint=0.5
+        self.player_label.size_hint=(1,0.5)
+        self.game_is_over = False
+
+        global stop_threads
+        stop_threads = False
 
         self.waitingAlert = Alert("Aguardando inimigo. Prepare-se!",dismissable=False)
 
-        self.check_for_game_over.start()#####################
+        #self.check_for_game_over.start()#####################
+        Thread(target=self.check_game_over).start()
 
         if(role=="client"):
 
@@ -163,6 +173,7 @@ class MainWindow(Screen):
             self.sockClient = ClientSocket(port=portClient)
             self.sockHost = HostSocket(port=portHost)
             Thread(target=self.enemy_data).start()
+            
 
         elif(role=="host"):
 
@@ -185,8 +196,14 @@ class MainWindow(Screen):
     def check_game_over(self):
 
         while not self.game_is_over:
+
+            global stop_threads
+            if stop_threads:
+                break
+
             with self.mutex:
                 if self.player_label.height_hint <= 0:
+<<<<<<< HEAD
                     Clock.schedule_once(self.change_screen, 0)
                     self.game_is_over = True
                     self.finish_connection = True
@@ -195,6 +212,16 @@ class MainWindow(Screen):
                     Clock.schedule_once(self.change_screen, 0)
                     self.game_is_over = True
                     self.finish_connection = True
+=======
+                    Clock.schedule_once(self.endLose)
+                    self.game_is_over = True
+                    stop_threads = True
+                elif self.player_label.height_hint >= 1:
+                    Clock.schedule_once(self.endWin)
+                    self.game_is_over = True
+                    stop_threads = True
+
+>>>>>>> 3bd70b08855ac68c8b57d4427279ba08e63e139e
                 time.sleep(0.1)
 #########################################################################
 
@@ -202,8 +229,39 @@ class MainWindow(Screen):
         self.manager.current = 'EndWinWindow'
 
     def errorCritical(self,data):
+
+        global stop_threads
+        stop_threads = True
+
+        try:
+            Thread(target=self.enemy_data).join()
+            print('thread 1 killed')
+        except:
+            pass
+
+        try:
+            Thread(target=self.user_data).join()
+            print('thread 2 killed')
+        except:
+            pass
+
+        try:
+            self.gameOverThread.join()
+            print('thread 3 killed')
+        except:
+            pass
+
+        self.waitingAlert.alert.dismiss()
         Alert("Verifique o código e tente novamente!")
         self.manager.current = 'StartWindow'
+
+    def endWin(self,data):
+        self.manager.current = 'EndWinWindow'
+        print("EndWinWindow está na tela!")
+
+    def endLose(self,data):
+        self.manager.current = 'EndLoseWindow'
+        print("EndLoseWindow está na tela!")
 
     def enemyFound(self,data):
         self.waitingAlert.alert.dismiss()
@@ -226,7 +284,15 @@ class MainWindow(Screen):
                 Clock.schedule_once(self.errorCritical)
                 return
 
+<<<<<<< HEAD
         while not self.finish_connection:
+=======
+        while True:
+
+            global stop_threads
+            if stop_threads:
+                break
+>>>>>>> 3bd70b08855ac68c8b57d4427279ba08e63e139e
           
             global last_p2_score
             actual_p2_score = int(self.sockClient.get_data())
@@ -250,11 +316,20 @@ class MainWindow(Screen):
                 Thread(target=self.enemy_data).start()
                 Clock.schedule_once(self.enemyFound)
             except:
-                #print("Impossível se conectar!")
+                print("Impossível se conectar!")
                 Clock.schedule_once(self.errorCritical)
                 return
 
+<<<<<<< HEAD
         while not self.finish_connection:
+=======
+        while True:
+
+            global stop_threads
+            if stop_threads:
+                break
+
+>>>>>>> 3bd70b08855ac68c8b57d4427279ba08e63e139e
             time.sleep(0.1)
             self.sockHost.send_data(self.player_button.num_clicks)
             #print(self.player_button.num_clicks)
