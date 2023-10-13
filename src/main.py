@@ -204,12 +204,12 @@ class MainWindow(Screen):
         self.manager.current = 'StartWindow'
 
     def endWin(self,data):
-        self.manager.current = 'EndLoseWindow'
-        print("EndLoseWindow está na tela!")
-
-    def endLose(self,data):
         self.manager.current = 'EndWinWindow'
         print("EndWinWindow está na tela!")
+
+    def endLose(self,data):
+        self.manager.current = 'EndLoseWindow'
+        print("EndLoseWindow está na tela!")
 
     def enemyFound(self,data):
         self.waitingAlert.alert.dismiss()
