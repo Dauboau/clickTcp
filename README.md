@@ -1,7 +1,7 @@
 # clickTcp
 
 ### Autores
-Daniel Contente Romanzini NUSP: 12547614.
+Daniel Contente Romanzini NUSP: 12547614 <br/>
 Gabriel Henrique Brioto NUSP: 12547764.
 Guilherme Chiarotto de Moraes NUSP: 12745229.
 
