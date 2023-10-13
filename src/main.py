@@ -17,26 +17,26 @@ from threading import Thread, main_thread
 from kivy.clock import Clock
 from kivy.config import Config
 
-from multiplayer import ClientSocket, HostSocket
+from multiplayer import ClientSocket, HostSocket # Importa classes personalizadas para lidar com a comunicação multiplayer
 
 #Config.set('graphics', 'fullscreen', 1)
 
 class PlayerLabel(Label):
-    height_hint = NumericProperty(0.5)
-    pos_x = NumericProperty(0)
-    pos_y = NumericProperty(0)
+    height_hint = NumericProperty(0.5) # Define uma propriedade numérica para a altura_hint do label
+    pos_x = NumericProperty(0) # Define uma propriedade numérica para a posição X
+    pos_y = NumericProperty(0) # Define uma propriedade numérica para a posição Y
 
     def __init__(self, **kwargs):
         super(PlayerLabel, self).__init__(**kwargs)
-        self.size_hint = (1, self.height_hint)
+        self.size_hint = (1, self.height_hint) # Configura o tamanho_hint do label com base na altura_hint
 
     def set_pos(self, pos_x, pos_y):
-        self.pos_x = pos_x
-        self.pos_y = pos_y
+        self.pos_x = pos_x # Define a posição X do label
+        self.pos_y = pos_y # Define a posição Y do label
 
 class PlayerButton(Button):
     
-    num_clicks = NumericProperty(0)
+    num_clicks = NumericProperty(0) # Define uma propriedade numérica para o número de cliques no botão
 
 class StartWindow(Screen):
     def __init__(self, **kwargs):
