@@ -190,11 +190,11 @@ class MainWindow(Screen):
         self.player_label.height_hint += 1 * 0.08
         self.player_label.size_hint = (1, self.player_label.height_hint)
 
-        #verificar se o jogo acabou
-#########################################################################
-    def check_game_over(self):
 
-        while not self.game_is_over:
+    def check_game_over(self):
+        """Verifica se o jogo acabou"""
+
+        while True:
 
             global stop_threads
             if stop_threads:
@@ -203,15 +203,12 @@ class MainWindow(Screen):
             with self.mutex:
                 if self.player_label.height_hint <= 0:
                     Clock.schedule_once(self.endLose)
-                    self.game_is_over = True
                     stop_threads = True
                 elif self.player_label.height_hint >= 1:
                     Clock.schedule_once(self.endWin)
-                    self.game_is_over = True
                     stop_threads = True
 
                 time.sleep(0.1)
-#########################################################################
 
     def errorCritical(self,data):
 
