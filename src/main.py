@@ -199,6 +199,7 @@ class MainWindow(Screen):
 #########################################################################
 
     def errorCritical(self,data):
+        self.waitingAlert.alert.dismiss()
         Alert("Verifique o código e tente novamente!")
         self.manager.current = 'StartWindow'
 
@@ -253,7 +254,7 @@ class MainWindow(Screen):
                 Thread(target=self.enemy_data).start()
                 Clock.schedule_once(self.enemyFound)
             except:
-                #print("Impossível se conectar!")
+                print("Impossível se conectar!")
                 Clock.schedule_once(self.errorCritical)
                 return
 
