@@ -2,8 +2,8 @@
 
 ### Autores
 Daniel Contente Romanzini NUSP: 12547614 <br/>
-Gabriel Henrique Brioto NUSP: 12547764.
-Guilherme Chiarotto de Moraes NUSP: 12745229.
+Gabriel Henrique Brioto NUSP: 12547764 <br/>
+Guilherme Chiarotto de Moraes NUSP: 12745229 <br/>
 
 Link do vídeo explicativo: https://drive.google.com/file/d/1urpEQjOqgTMaLlIjYRdjuAC2o1YOhnau/view
 
