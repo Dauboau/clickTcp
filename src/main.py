@@ -266,7 +266,7 @@ class Manager(ScreenManager):
 class MyApp(App):
     def build(self):
         self.title = 'ClickTCP'
-        Builder.load_file("screen.kv")
+        Builder.load_file("style/screen.kv")
         return Manager(transition=NoTransition())
 
 if __name__ == '__main__':
