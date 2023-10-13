@@ -17,6 +17,9 @@ class ClientSocket:
     def get_data(self):
         return self.sock.recv(1024)
     
+    def close(self):
+        self.sock.close()
+    
 class HostSocket:
 
     def __init__(self,port=54546):
@@ -34,5 +37,8 @@ class HostSocket:
 
         msg = str(clicks)
         self.sock.send(msg.encode('ascii'))
+
+    def close(self):
+        self.sock.close()
 
         return

@@ -130,6 +130,7 @@ class Alert:
 
 class MainWindow(Screen):
 
+    finish_connection = False
     game_is_over = False######################
     mutex = threading.Lock() ###########################
 
@@ -186,14 +187,19 @@ class MainWindow(Screen):
         while not self.game_is_over:
             with self.mutex:
                 if self.player_label.height_hint <= 0:
-                    self.manager.current = 'EndLoseWindow'
+                    Clock.schedule_once(self.change_screen, 0)
                     self.game_is_over = True
+                    self.finish_connection = True
 
                 elif self.player_label.height_hint >= 1:
-                    self.manager.current = 'EndWinWindow'
+                    Clock.schedule_once(self.change_screen, 0)
                     self.game_is_over = True
+                    self.finish_connection = True
                 time.sleep(0.1)
 #########################################################################
+
+    def change_screen(self, *args):
+        self.manager.current = 'EndWinWindow'
 
     def errorCritical(self,data):
         Alert("Verifique o código e tente novamente!")
@@ -220,7 +226,7 @@ class MainWindow(Screen):
                 Clock.schedule_once(self.errorCritical)
                 return
 
-        while True:
+        while not self.finish_connection:
           
             global last_p2_score
             actual_p2_score = int(self.sockClient.get_data())
@@ -231,6 +237,8 @@ class MainWindow(Screen):
                 last_p2_score = actual_p2_score
                 
             #print(actual_p2_sxcore)
+        
+        self.sockClient.close()
 
     def user_data(self):
 
@@ -246,10 +254,12 @@ class MainWindow(Screen):
                 Clock.schedule_once(self.errorCritical)
                 return
 
-        while True:
+        while not self.finish_connection:
             time.sleep(0.1)
             self.sockHost.send_data(self.player_button.num_clicks)
             #print(self.player_button.num_clicks)
+        
+        self.sockHost.close()
 
 class EndWinWindow(Screen):
     def __init__(self, **kwargs):
