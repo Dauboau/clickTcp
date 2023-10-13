@@ -133,6 +133,7 @@ class Alert:
 
 class MainWindow(Screen):
 
+    finish_connection = False
     game_is_over = False######################
     mutex = threading.Lock() ###########################
 
@@ -207,8 +208,10 @@ class MainWindow(Screen):
                 elif self.player_label.height_hint >= 1:
                     Clock.schedule_once(self.endWin)
                     stop_threads = True
-
                 time.sleep(0.1)
+
+    def change_screen(self, *args):
+        self.manager.current = 'EndWinWindow'
 
     def errorCritical(self,data):
 
@@ -265,7 +268,6 @@ class MainWindow(Screen):
                 print("Impossível se conectar!")
                 Clock.schedule_once(self.errorCritical)
                 return
-
         while True:
 
             global stop_threads
@@ -281,6 +283,8 @@ class MainWindow(Screen):
                 last_p2_score = actual_p2_score
                 
             #print(actual_p2_sxcore)
+        
+        self.sockClient.close()
 
     def user_data(self):
 
@@ -305,6 +309,8 @@ class MainWindow(Screen):
             time.sleep(0.1)
             self.sockHost.send_data(self.player_button.num_clicks)
             #print(self.player_button.num_clicks)
+        
+        self.sockHost.close()
 
 class EndWinWindow(Screen):
     def __init__(self, **kwargs):
